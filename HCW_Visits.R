@@ -14,7 +14,7 @@ g <- read.csv(paste("~/newdata/", inputs[1], sep = ""), sep = "\t")
 
     #Filter the data to have a specific jobtype
     hcwOfInterest <-  dplyr::filter(g, jtid == hcw, daytype == inputs[2])
-    print(paste("Group Facility IDs:", unique(hcwOfInterest$fid), "Job Type ID:", hcw, sep = " " ))
+    print(paste("Group Facility IDs:", unique(hcwOfInterest$rfid), "Job Type ID:", hcw, sep = " " ))
 
     #What is too small to fit? For a zero inflated poisson
     if(nrow(hcwOfInterest) < 25){
