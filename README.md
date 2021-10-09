@@ -12,5 +12,8 @@ __Description__
 
 This repository contains all scripts used for the writing of my honors thesis. It also includes the parameters produced which may be of use to other modelers. When using the generative distributions please cite this repository. 
 
+__Supporting Documents__
 
+- Job Type Encoding Schema
+- Facility Groups
 
