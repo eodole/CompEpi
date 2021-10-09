@@ -6,7 +6,7 @@ CompEpi is a research group at the University of Iowa focused on using computati
 
 Research Group Website: [https://vinci.cs.uiowa.edu/compepi/]
 
-More about the CS Department:[https://cs.uiowa.edu/research]
+More about the CS Department: [https://cs.uiowa.edu/research]
 
 __Description__
 
