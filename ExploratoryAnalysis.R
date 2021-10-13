@@ -1,5 +1,6 @@
 library(readxl)
 library(tidyverse)
+library(ggridges)
 
 path = "~/Desktop/CompEpi/Results/"
 setwd(path)
@@ -9,11 +10,17 @@ sheet = excel_sheets("VisitFreqResults.xlsx")
 results = lapply(setNames(sheet,sheet), function(x) read_excel("VisitFreqResults.xlsx", sheet =x, col_types =  c("numeric","text","numeric","numeric")))
 results = bind_rows(results, .id = "Sheet")
 
+#All results as geompoint
 ggplot(results, mapping = aes(x = `Job Type ID`, y = Estimate )) + geom_point(aes(col = Sheet))
 
-ggplot(results,mapping = aes(x=Estimate))+
-  geom_histogram() +
-  geom_density(aes(kernel = "gaussian"))
+#All results as hist
+ggplot(results,mapping = aes(x=Estimate, fill = `Job Type ID`, color = `Job Type ID`))+
+  geom_histogram(alpha = 0.5, binwidth = 0.05) 
+  #geom_density(aes(kernel = "gaussian"))
+
+#All results as ridges by jobtype
+ggplot(results) +
+  geom_density_ridges(aes(x = Estimate, y = `Sheet`, fill = Sheet))
 
 results_j3 = filter(results, `Job Type ID` == 3)
 
@@ -35,8 +42,12 @@ results_jt1 = filter(results,`Job Type ID` ==1 )
 jt1 = lapply(setNames(1:11, results_jt12$Sheet[1:11]), function(x) dpois(0:10, exp(results_jt1$Estimate[x]))) 
 jt1 = bind_cols(jt1)
 matplot(jt1, type = "l", col = 1:11, lty = 1:11,ylab= "Density", main = "Poisson Density for Job Type 1") 
-legend("topright", names(jt1), col = 1:11, lty = 1:11)
+#legend("topright", names(jt1), col = 1:11, lty = 1:11)
 
+results_jtavg <- results %>% na.omit() %>% group_by(`Job Type ID`) %>%
+  summarize(Avg_Est = mean(Estimate))
 
+results_sheetavg <- results %>% na.omit() %>% group_by(Sheet) %>% summarize(Avg_Est = mean(Estimate))
 
+ggplot(results_sheetavg, aes(color = Sheet, xlab = "none")) + geom_bar(aes(x = Sheet, y= Avg_Est),stat = "identity")
 
