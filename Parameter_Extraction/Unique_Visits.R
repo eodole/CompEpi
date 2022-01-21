@@ -12,8 +12,8 @@ g <- read.csv(paste("~/newdata/", inputs[1], sep = ""), sep = "\t")
 for(hcw in 1:33){
 
   #Filter the data to have a specific jobtype
-  #hcwOfInterest <-  dplyr::filter(g, jtid == hcw, daytype == inputs[2], shift2 = inputs[3])
-  hcwOfInterest <-  dplyr::filter(g, jtid == hcw, daytype == "weekday", shift2 == "day")
+  hcwOfInterest <-  dplyr::filter(g, jtid == hcw, daytype == inputs[2], shift2 = inputs[3])
+  #hcwOfInterest <-  dplyr::filter(g, jtid == 1, daytype == "weekday", shift2 == "day")
   
   #Label the Output
   print(paste("Group Facility IDs:", unique(hcwOfInterest$rfid), "Job Type ID:", hcw, sep = " " ))
