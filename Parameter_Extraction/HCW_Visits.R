@@ -5,6 +5,10 @@ library(pscl)
 library(dplyr)
 library(lubridate)
 
+## This code generates a zero-inflated poisson distribution to describe 
+## the number of visits healthcare workers make in the an hour. 
+## Results are printed to a text file. 
+
 #Load Data 
 inputs = commandArgs(trailingOnly = TRUE)
 print(inputs)						
@@ -16,7 +20,7 @@ g <- read.csv(paste("~/newdata/", inputs[1], sep = ""), sep = "\t")
     hcwOfInterest <-  dplyr::filter(g, jtid == hcw, daytype == inputs[2])
     print(paste("Group Facility IDs:", unique(hcwOfInterest$rfid), "Job Type ID:", hcw, sep = " " ))
 
-    #What is too small to fit? For a zero inflated poisson
+    #Condition: not enough data to build a reasonable distribution
     if(nrow(hcwOfInterest) < 25){
       print("Less Than 25 Observations")
     }else{

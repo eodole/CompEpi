@@ -1,0 +1,25 @@
+See cs1210 f15 project 2 although not that relevant.
+
+Assumptions: rooms are always full. patients discharged only between
+sessions. exclude schedules that have excessive housekeeper events as
+these indicate a likely patient change mid-shift.
+
+Order input records by itime.
+R = {} # where R={rid:{hid:otime, hid:otime},...}
+
+Process each day.
+  process each visit.
+    place {hid:otime} in R[rid], removing any other hid with otime < itime
+    if hid is infected, attempt to infect pid and remaining hid in room based on overlap(s)
+    if hid is uninfected, attempt to infect hid from pid and remaining hid by overlap(s)
+  update status of all infected agents
+  discharge/admit patients
+  
+
+===
+To use script:
+
+Edit query.sql to select a date to simulate from swipesense data.
+
+mysql -p -u uihc ssense < query.sql | sed -e's/\t/,/g' | sed -e's|/|-|g' > input.csv
+pysim.py < input.csv > output
