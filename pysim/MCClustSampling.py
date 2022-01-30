@@ -30,7 +30,7 @@ def mixtureModel(x ,mu, sigma, prop):
 def generate_sample(mu_list,sigma_list,prop_list):
     sample = None
     while sample == None:
-        x = random.randint(0,15) # superimposed limit of a 4 hour visit 
+        x = random.random() * 5  # x in (0,5) => 0 sec - 4 hour visits are possible.
         y = random.random()
         if y < mixtureModel(x, mu_list, sigma_list,prop_list) :
             sample = x 
