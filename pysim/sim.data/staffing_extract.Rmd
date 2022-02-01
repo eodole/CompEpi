@@ -1,0 +1,19 @@
+Load libraries 
+
+```{r}
+library(tidyverse)
+```
+
+
+Read in the data to get staffing levels 
+```{r}
+fid15 = read_tsv("./fid15.tsv")
+fid15 %>% group_by(jtid, hid) %>% summarise(count = n()) %>% group_by(jtid) %>% summarise(count = n())
+```
+
+Same thing for the other facility 
+```{r}
+fid19 = read_tsv("./fid19.tsv")
+fid19 %>% group_by(jtid, hid) %>% summarise(count = n()) %>% group_by(jtid) %>% summarise(count = n())
+```
+

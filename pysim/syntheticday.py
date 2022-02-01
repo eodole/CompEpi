@@ -17,10 +17,36 @@ n_rooms = 7
 schedule = []
 #input_staffing[x] = [# of staff of that jtype, [mu, sigma, prop] duration params, lambda total visits per hour, lambda unique visits ]
 input_staffing = {}
-input_staffing[1] = [2, [[4.4,5.1],[.7, .8],[.4,.6]], 1.5, 4]
-# input_staffing[2] = [1,5,1.5,4]
-# input_staffing[3] = [1, 7,2,4] 
-# input_staffing[4] = [1,8,2.5,4] 
+
+# Set Up for Facility 15
+
+input_staffing[1] = [7, [], , ]
+input_staffing[2] = [3, ]
+input_staffing[3] = [1, ] 
+input_staffing[7] = [2,]
+input_staffing[8] = 1
+input_staffing[11] = 1
+input_staffing[33] = 1
+
+# Set Up for Facility 19
+
+# input_staffing[1] = [14]
+# input_staffing[2] = [2]
+# input_staffing[3] = [4]
+# input_staffing[4] = 2
+# input_staffing[5]= 1
+# input_staffing[6] = 10 
+# input_staffing[7] = [1,]
+# input_staffing[8] = 1
+# input_staffing[9] = 2
+# input_staffing[10 ] = 3
+# input_staffing[18] = 1
+# input_staffing[20] = 6
+# input_staffing[21] = 1
+# input_staffing[23] = 1
+# input_staffing[26] = 1
+# input_staffing[30] = 1
+# input_staffing[33] = 1
 
 #Returns a list of numbers that represent the rids and order that they are visited in
 def room_order(unique_r,total_r):
