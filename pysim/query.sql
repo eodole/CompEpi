@@ -16,9 +16,3 @@ FROM visits v, hcws h, rooms r, units u, jobs j, jtypes jt
 WHERE v.hid=h.hid AND v.shift='day' AND h.fid=16 AND v.rid=r.rid AND r.uid=u.uid AND u.uid=171 AND j.jid=h.jid AND jt.jtid=j.jtid AND
       itime>"2018-01-01" AND otime<"2018-01-02" ORDER BY otime,itime;
 */
-/*
-
-/home/eodole/swipesense/queries
-
-*
-/
