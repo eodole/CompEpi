@@ -78,7 +78,7 @@ def room_order(unique_r,total_r):
     # else:
     #     visited = [rooms[0]] * total_r
         
-    return visited
+    # return visited
     
 
 #Assign an hid number to the healthcare worker 
@@ -104,9 +104,9 @@ def generate_visits(hid,jtid,staff_info,visited,itime):
     itimes = []
     durations = []
     for i in range(0,len(visited)):
-        itimes.append(str(random_date(itime)))
+        itimes.append(random_date(itime))
         durations.append(assign_visit_dur(staff_info))
-    sorted(itimes)
+    sorted(itimes)## This doesn't work how do i get it to work
     print(itimes)
 
 def total_visits_shift(lam): #,shift_len):
