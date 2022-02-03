@@ -22,7 +22,7 @@ input_staffing = {}
 start_date = datetime.datetime(2020,1,1,7,0)
 # Set Up for Facility 15
 
-input_staffing[1] = [1, [[4.5,5.5],[0.03,0.75],[.5,.5]], 4,2.5 ] #7
+input_staffing[1] = [1, [[4.5,5.5],[0.03,0.75],[.5,.5]], 4,3.5 ] #7
 # input_staffing[2] = [3, ]
 # input_staffing[3] = [1, ] 
 # input_staffing[7] = [2,]
@@ -64,7 +64,8 @@ def room_order(unique_r,total_r):
             idx = random.randint(0, len(unique_r)-1)
             visited.append(unique_r[idx])
     else:
-        visited = unique_r[0] * total_r
+        r = unique_r[0]
+        visited = [r] * total_r
 
     return visited
         
@@ -101,13 +102,29 @@ def assign_visit_dur(staff_info):
 
 def generate_visits(hid,jtid,staff_info,visited,itime):
     #print(hid,jtid,visited,itime)
-    itimes = []
+    
     durations = []
+    synthetic_v = []
+    #print(type(visited),visited)
     for i in range(0,len(visited)):
-        itimes.append(random_date(itime))
+        # itimes.append(random_date(itime))
         durations.append(assign_visit_dur(staff_info))
-    sorted(itimes)## This doesn't work how do i get it to work
-    print(itimes)
+        #print(visited)
+    not_visit_time = (60*60-sum(durations))/len(visited)
+    # print(len(visited),not_visit_time)
+    itimes = random_date(itime,not_visit_time,len(visited))
+    for i in range(0,len(itimes)):
+        intime = itimes[i]
+        
+        dur = durations[i]
+        otime = intime + datetime.timedelta(seconds=dur)
+        rid = visited[i]
+        synthetic_v.append((hid,jtid,rid,dur,str(intime),str(otime)))
+    return(synthetic_v)
+
+        
+    #itimes = sorted(itimes)## This doesn't work how do i get it to work
+    #print(itimes)
 
 def total_visits_shift(lam): #,shift_len):
     #lam = lam per hour
@@ -119,11 +136,15 @@ def total_visits_shift(lam): #,shift_len):
 
 
 
-def random_date(start):
-    
-    random_date = start + datetime.timedelta(minutes=random.randrange(60))
-    
-    return random_date
+def random_date(start,not_visit_time,n_visits):
+    itimes = []
+    for n in range(0,n_visits):
+        
+        random_date = start + datetime.timedelta(seconds=random.randrange(not_visit_time//10))
+        itimes.append(random_date)
+        start = start + datetime.timedelta(seconds= not_visit_time)
+
+    return itimes
 
 #print(random_date(start_date, end_date))
 
@@ -150,8 +171,8 @@ if __name__ == "__main__":
                     visited = []
                 
                 if len(visited) > 0:
-                    generate_visits(hid,jtid,staff_info,visited,start_date + datetime.timedelta(hours=h))
-
+                    schedule.append(generate_visits(hid,jtid,staff_info,visited,start_date + datetime.timedelta(hours=h)))
+    print(schedule)
                 
                 #Generate duration using hid, jtid, visits given 
                 
