@@ -17,7 +17,7 @@ n_rooms = 7
 schedule = []
 #input_staffing[x] = [# of staff of that jtype, [mu, sigma, prop] duration params, lambda total visits per hour, lambda unique visits ]
 input_staffing = {}
-start_date = datetime.datetime(2020,1,1,7,0)
+start_date = datetime.datetime(2020,1,1,7,0) 
 # Set Up for Facility 15
 
 input_staffing[1] = [1, [[4.5,5.5],[0.03,0.75],[.5,.5]], 4,3.5 ] #7

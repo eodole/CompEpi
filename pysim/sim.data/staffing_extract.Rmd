@@ -2,18 +2,23 @@ Load libraries
 
 ```{r}
 library(tidyverse)
+setwd("~/Desktop/CompEpi/pysim/sim.data")
 ```
 
 
-Read in the data to get staffing levels 
-```{r}
-fid15 = read_tsv("./fid15.tsv")
-fid15 %>% group_by(jtid, hid) %>% summarise(count = n()) %>% group_by(jtid) %>% summarise(count = n())
-```
+1. Read in the data to get staffing levels 
+2. Find the number of unique rooms visits 
 
-Same thing for the other facility 
 ```{r}
 fid19 = read_tsv("./fid19.tsv")
 fid19 %>% group_by(jtid, hid) %>% summarise(count = n()) %>% group_by(jtid) %>% summarise(count = n())
+unique(fid19$rid)
 ```
+In facility 19 there are 9 different rooms 
 
+```{r}
+fid21 = read_tsv("./fid21.tsv")
+fid21 %>% group_by(jtid, hid) %>% summarise(count = n()) %>% group_by(jtid) %>% summarise(count = n())
+unique(fid21$rid)
+```
+ In facility 21 there are 10 unique rooms 
