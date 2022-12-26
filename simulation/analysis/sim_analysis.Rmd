@@ -1,0 +1,178 @@
+---
+title: "sim_analysis"
+author: "Leona Odole"
+date: '2022-07-15'
+output: html_document
+---
+
+
+```{r echo=FALSE, error=FALSE}
+# Load Libraries
+library(tidyverse)
+library(stringr)
+library(dplyr)
+library(ggplot2)
+library(lubridate)
+library(patchwork)
+```
+
+# Data Set-Up 
+Make sure to set the working directory to the proper results directory
+```{r}
+# Set Working Directory
+setwd("~/Desktop/REU2022/pysim/honors_thesis/results3")
+
+# List files in directory
+files = list.files()
+
+# Read in All Data
+for(f in files){
+  if(f == files[1]){
+    data <- read_csv(f)
+  }else if(str_detect(f,"pop")){
+    population <- read_csv(f)
+  }else{
+    data <- rbind(data, read.csv(f))
+  }
+}
+```
+
+# Only to compare consecutive and synthetic
+```{r}
+consec = data %>% filter(schedule == "consecutive") %>%
+  mutate(sim_day2 = ceiling(difftime(as.POSIXct(sim_day, zone == ""),as.POSIXct("2019-02-12", zone = ""), units = "day")))
+
+synth = data %>% filter(schedule == "synth") %>%
+  mutate(sim_day2 = ceiling(difftime(as.POSIXct(sim_day, zone == ""),as.POSIXct("2020-01-02", zone = ""), units = "day")))
+
+data = rbind(synth,consec)
+```
+
+
+# Add relevant calculated values and join with population data
+```{r}
+data = data %>% 
+  left_join(population) %>%
+  mutate(
+    pat_percentage = pat_inf / patients,
+    hcws_percentage = hcws_inf /hcws,
+    run = as.factor(run),
+    schedule = as.factor(schedule)
+  )
+```
+
+# Calculate Confidence Intervals 
+
+$$
+t = \frac{\bar{x} - \mu}{s / \sqrt{n}}
+$$
+Since I want a 95% confidence interval I need to find $c$ such that 
+$$
+P(-c \leq t \leq c) = 0.95
+$$
+R uses 1 sided quantile 
+```{r}
+n = length(unique(data$run))
+c = qt(.975, df =n-1)
+
+```
+
+confidence intervals are defined as 
+$$
+\bar{x} \pm \frac{cs}{\sqrt{n}}
+$$
+
+# Visualization
+In Case of Two Synthetic Facilities Use: 
+```{r}
+# processed_data = data %>%
+#   group_by(facility, sim_day) %>%
+#   summarize(hcw_inf = mean(hcws_percentage),
+#             hcw_upper = mean(hcws_percentage) + c*(sd(hcws_percentage))/sqrt(n),
+#             hcw_lower = mean(hcws_percentage) - c*sd(hcws_percentage)/sqrt(n),
+#             pat_inf = mean(pat_percentage),
+#             pat_upper = mean(pat_percentage) + c*sd(pat_percentage)/sqrt(n),
+#             pat_lower = mean(pat_percentage) - c*sd(pat_percentage)/sqrt(n)
+#             )
+# 
+# 
+# #Visualization of the infections curves with 95% confidence
+#  p = processed_data %>%
+#   ggplot(aes(x = sim_day, color = facility)) +
+#   geom_line(aes(y = hcw_inf)) +
+#   scale_color_manual(values = c("#78b260","#000000")) +
+#   labs(x = "Simulation Day", y = "% Healthcare Workers Infected", title = "Infection Curve Comparison in ICUs") +
+#   theme_light() +
+#   theme(
+#         plot.title = element_text(hjust = 0.5)
+#         )
+#  p + geom_errorbar(aes(ymin = hcw_lower, ymax= hcw_upper))
+#  p + geom_ribbon(aes(ymin = hcw_lower, ymax= hcw_upper),alpha = 0.2, linetype = 0)
+# 
+# 
+
+```
+
+In Case of Synth vs. Consecutive Comparison:
+```{r}
+processed_data = data %>%
+  group_by(facility,schedule,sim_day2) %>%
+  summarize(hcw_inf = mean(hcws_percentage),
+            hcw_upper = mean(hcws_percentage) + c*(sd(hcws_percentage))/sqrt(n),
+            hcw_lower = mean(hcws_percentage) - c*sd(hcws_percentage)/sqrt(n),
+            pat_inf = mean(pat_percentage),
+            pat_upper = mean(pat_percentage) + c*sd(pat_percentage)/sqrt(n),
+            pat_lower = mean(pat_percentage) - c*sd(pat_percentage)/sqrt(n),
+            hcw_incidence = mean(hcws_inf),
+            hcw_inc_u = mean(hcws_inf) + c*(sd(hcws_inf))/sqrt(n),
+            hcw_inc_l = mean(hcws_inf) - c*(sd(hcws_inf))/sqrt(n)
+            )
+processed_data$fac_sched = processed_data %>%
+  with(interaction(facility,schedule))
+
+p = processed_data %>%
+  ggplot(aes(x = sim_day2, color = fac_sched)) + #9a60b2 "#005799"
+  geom_line(aes(y = hcw_incidence)) +
+  scale_color_manual(values = c("#78b260","#d7bfe0","#2f4a24","#9a60b2")) +
+  labs(x = "Simulation Day", y = "Infection Incidence", title = "Infection Curve Comparison in ICUs", col = "Schedule Generation Type") +
+  theme_light() +
+  theme(
+        plot.title = element_text(hjust = 0.5)
+        )
+
+p + geom_ribbon(aes(ymin = hcw_inc_l, ymax= hcw_inc_u), alpha = 0.2, linetype = 0)
+p + geom_errorbar(aes(ymin = hcw_inc_l, ymax= hcw_inc_u))
+p
+```
+# Error Comparison Between Consec and Synth
+```{r}
+
+difference_data = full_join(x = processed_data %>% filter(schedule == "consecutive") %>% select(facility , sim_day2, hcw_incidence), # filter for consecutive schedules and grab variables needed
+           y = processed_data %>% filter(schedule == "synth") %>% select(facility , sim_day2, hcw_incidence), # filter for synthetic schedules and grab variables needed
+           by = c('facility', 'sim_day2')) %>% # rejoin these two datasets 
+   mutate(delta = abs(hcw_incidence.x - hcw_incidence.y)) %>% # create a difference column
+   select(facility, sim_day2, delta)  #Select variables needed 
+
+
+
+only21 = difference_data %>% filter(facility == "fac21") %>%
+  ggplot(aes(facility,delta)) + 
+  geom_boxplot() + 
+  theme(
+    axis.title.x = element_blank()
+  ) + labs(title = "Only Facility 21")
+  
+
+side_by_side = difference_data %>% 
+  ggplot(aes(facility,delta)) + 
+  geom_boxplot() + 
+  theme(
+    axis.title.x = element_blank()
+  ) + labs(title = "Both Facilities")
+  
+
+side_by_side + only21 + 
+  plot_annotation(title = "Difference In Infection Incidence")
+
+```
+
