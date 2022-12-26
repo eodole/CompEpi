@@ -10,7 +10,11 @@ More about the CS Department: [https://cs.uiowa.edu/research]
 
 __Description__
 
-This repository contains all code used in the writing of my honors thesis. It also includes supporting documents and parameters which may be of use to other modelers. When using the generative distributions please cite this repository. 
+This repository contains all code used in the writing of my honors thesis and supporting documents. Parameters extracted which may be of use to other modelers can be requested by email (*eodole@uiowa.edu*). When using the generative distributions or python code please cite this repository. 
+
+
+__Citation Guidance__
+*Odole, E. (2022) eodole-CompEpi [filename.py]. https://github.com/eodole/CompEpi/filepath*
 
 ## Modeling Healthcare Worker Behaviors From Locator Traces 
 
