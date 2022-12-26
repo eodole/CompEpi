@@ -14,6 +14,7 @@ This repository contains all code used in the writing of my honors thesis and su
 
 
 __Citation Guidance__
+
 *Odole, E. (2022) eodole-CompEpi [filename.py]. https://github.com/eodole/CompEpi/filepath*
 
 ## Modeling Healthcare Worker Behaviors From Locator Traces 
